@@ -1,0 +1,1 @@
+package shine_skeleton
