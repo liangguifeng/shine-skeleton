@@ -13,5 +13,8 @@ func NewHelloWorldServer() *helloWorldServer {
 }
 
 func (h helloWorldServer) HelloWorld(ctx context.Context, request *hello_world.HelloWorldRequest) (*hello_world.HelloWorldResponse, error) {
-	return nil, nil
+	return &hello_world.HelloWorldResponse{
+		Code:    1,
+		Message: "sssssssssssss",
+	}, nil
 }

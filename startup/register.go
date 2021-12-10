@@ -2,28 +2,22 @@ package startup
 
 import (
 	"context"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/liangguifeng/shine/server"
 	"google.golang.org/grpc"
-	"net/http"
 	hello_world "shine-skeleton/proto/shine_skeleton_proto/helloworld"
 	"shine-skeleton/server/hello_world_server"
 )
 
-// RegisterGRPCServer 此处注册pb的Server
-func RegisterGRPCServer(grpcServer *grpc.Server) error {
-	hello_world.RegisterHelloWorldServiceServer(grpcServer, hello_world_server.NewHelloWorldServer())
-	return nil
-}
-
-// RegisterGateway 此处注册pb的Gateway
-func RegisterGateway(ctx context.Context, gateway *runtime.ServeMux, endPoint string, dopts []grpc.DialOption) error {
-	if err := hello_world.RegisterHelloWorldServiceHandlerFromEndpoint(ctx, gateway, endPoint, dopts); err != nil {
-		return err
+func RegisterHTTP(ctx context.Context, s *server.Server) {
+	if err := hello_world.RegisterHelloWorldHandler(ctx, s.ServerMux, s.GRPClientConn); err != nil {
+		panic(err)
 	}
-	return nil
 }
 
-// RegisterHttpRoute 此处注册http接口
-func RegisterHttpRoute(serverMux *http.ServeMux) error {
-	return nil
+func RegisterGRPC(ctx context.Context, s *server.Server) {
+	grpcServer := grpc.NewServer()
+	hello_world.RegisterHelloWorldServer(grpcServer, hello_world_server.NewHelloWorldServer())
+	if err := grpcServer.Serve(s.GRPCListener); err != nil {
+		panic(err)
+	}
 }

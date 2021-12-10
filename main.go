@@ -1,18 +1,20 @@
 package main
 
 import (
-	shine "github.com/liangguifeng/shine"
-	"github.com/liangguifeng/shine/app"
+	"github.com/liangguifeng/shine/server"
 	"shine-skeleton/startup"
 )
 
-const APP_NAME = "shine-skeleton"
+const PORT = ":8888"
 
 func main() {
-	runer, err := app.NewRunner(&shine.Application{
-		Name:       APP_NAME,
-		Type:       shine.APP_TYPE_GRPC,
-		LoadConfig: startup.LoadConfig,
-		SetupVars:  startup.SetupVars,
-	})
+	s := server.New(
+		server.WithEndpoint(PORT),
+		server.WithGRPCRegisterFunc(startup.RegisterGRPC),
+		server.WithHTTPRegisterFunc(startup.RegisterHTTP))
+
+	err := s.Start()
+	if err != nil {
+		return
+	}
 }
